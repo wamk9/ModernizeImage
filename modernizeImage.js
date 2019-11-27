@@ -18,6 +18,8 @@ class modernizeImage
     
     this.dataDisplayType = ((obj.hasOwnProperty('displayType')) ? obj.dataImgName : 'data-display-type');
 
+    this.dataLazyLoadIndentifier = ((obj.hasOwnProperty('dataSrc')) ? obj.dataLazyLoadIndentifier : '.modernize-image');
+
     this.debug = ((obj.hasOwnProperty('debug')) ? obj.debug : false);
     
 	  if (this.debug)
@@ -46,13 +48,13 @@ class modernizeImage
     }
   }
   
-  init()
+  render()
   {      
-    this.check_webp_feature('lossy', function (feature, isSupported) 
+    this.check_webp_feature('lossy', this, function (feature, config, isSupported) 
     {
       var i, imagesElement;
-      
-      imagesElement = document.querySelectorAll('[data-img-name]');
+						
+      imagesElement = document.querySelectorAll('[' + config.dataImgName + ']');
       
       /* Verify all elements with 'data-img-name' and set the data-src or data-bg for LazyLoad*/
       if (isSupported)
@@ -61,51 +63,34 @@ class modernizeImage
 
         for(var i = 0, len = imagesElement.length; i < len; i++) 
         {
-          // if URI has setted (use .webp and compatible images at same folder)
-          if (imagesElement[i].hasAttribute('data-uri') && imagesElement[i].hasAttribute('data-img-name') && imagesElement[i].hasAttribute('data-img-format'))
-          {
-            var fileUri =  imagesElement[i].getAttribute('data-uri') + '/';
-            var fileName = imagesElement[i].getAttribute('data-img-name');
-            var fileFormat = '.' + imagesElement[i].getAttribute('data-img-format');
-            // Verify if webp file exists, if doesn't, use compatible image
-            if (imagesElement[i].getAttribute('data-has-webp') == 'true')
-            {
-              // Used for background-image
-              if (imagesElement[i].getAttribute('data-img-type') == 'bg')
-                imagesElement[i].setAttribute('data-bg', 'url(' + fileUri + fileName + '.webp)');              
-              // Used for src attrib
-              else
-                imagesElement[i].setAttribute('data-src', fileUri + fileName + '.webp');
-            }
-            else
-            {
-              // Used for background-image
-              if (imagesElement[i].getAttribute('data-img-type') == 'bg')
-              {
-                imagesElement[i].setAttribute('data-bg','url('+ fileUri + fileName + fileFormat + ')');
-              }
-              // Used for src attrib
-              else
-              {
-                imagesElement[i].setAttribute('data-src', fileUri + fileName + fileFormat);
-              }
-            }
-          }
-          // But if you set the filename at JS, the script do it...
-          else
-          {
-            // Used for background-image
-            if (imagesElement[i].getAttribute('data-img-type') == 'bg')
-            {
-              imagesElement[i].setAttribute('data-bg','url('+ imagesWebp[imagesElement[i].getAttribute('data-img-name')]+')');
-            }
-            
-            // Used for src attrib
-            if (imagesElement[i].hasAttribute('data-img-name'))
-            {
-              imagesElement[i].setAttribute('data-src',imagesWebp[imagesElement[i].getAttribute('data-img-name')]);
-            }
-          }
+					console.log(imagesElement[i]);
+					var fileFolder =  imagesElement[i].getAttribute(config.dataImgFolder) + '/';
+					var fileName = imagesElement[i].getAttribute(config.dataImgName);
+					var fileFormat = '.' + imagesElement[i].getAttribute(config.dataImgFormat);
+					
+					// Verify if webp file exists, if doesn't, use compatible image
+					if (imagesElement[i].getAttribute(config.dataHasWebP) == 'true')
+					{
+						// Used for background-image
+						if (imagesElement[i].getAttribute(config.dataDisplayType) == 'background')
+							imagesElement[i].setAttribute(config.dataBg, 'url(' + fileFolder + fileName + '.webp)');              
+						// Used for src attrib
+						else
+							imagesElement[i].setAttribute(config.dataSrc, fileFolder + fileName + '.webp');
+					}
+					else
+					{
+						// Used for background-image
+						if (imagesElement[i].getAttribute(config.dataDisplayType) == 'background')
+						{
+							imagesElement[i].setAttribute(config.dataBg,'url('+ fileFolder + fileName + fileFormat + ')');
+						}
+						// Used for src attrib
+						else
+						{
+							imagesElement[i].setAttribute(config.dataSrc, fileFolder + fileName + fileFormat);
+						}
+					}
         }
       }
       else
@@ -117,95 +102,81 @@ class modernizeImage
           // if URI has setted (use .webp and compatible images at same folder)
           if (imagesElement[i].hasAttribute('data-uri') && imagesElement[i].hasAttribute('data-img-name') && imagesElement[i].hasAttribute('data-img-format'))
           {
-            var fileUri =  '/' + imagesElement[i].getAttribute('data-uri') + '/';
-            var fileName = imagesElement[i].getAttribute('data-img-name');
-            var fileFormat = '.' + imagesElement[i].getAttribute('data-img-format');
+						var fileFolder =  imagesElement[i].getAttribute(config.dataImgFolder) + '/';
+						var fileName = imagesElement[i].getAttribute(config.dataImgName);
+						var fileFormat = '.' + imagesElement[i].getAttribute(config.dataImgFormat);
                       
             // Used for background-image
-            if (imagesElement[i].getAttribute('data-img-type') == 'bg')
-            {
-              imagesElement[i].setAttribute('data-bg','url('+ fileUri + fileName + fileFormat + ')');
-            }
-            // Used for src attrib
-            else
-            {
-               imagesElement[i].setAttribute('data-src', fileUri + fileName + fileFormat);
-            }
-          }
-          // But if you set the filename at JS, the script do it...
-          else
-          {
-            // Used for background-image
-            if (imagesElement[i].getAttribute('data-img-type') == 'bg')
-            {
-              imagesElement[i].setAttribute('data-bg','url('+imagesWebp[imagesElement[i].getAttribute('data-img-name')]+')');
-            }
-            // Used for src attrib
-            if (imagesElement[i].hasAttribute('data-img-name'))
-            {
-              imagesElement[i].setAttribute('data-src',imagesWebp[imagesElement[i].getAttribute('data-img-name')]);
-            }
+						if (imagesElement[i].getAttribute(config.dataDisplayType) == 'background')
+						{
+							imagesElement[i].setAttribute(config.dataBg,'url('+ fileFolder + fileName + fileFormat + ')');
+						}
+						// Used for src attrib
+						else
+						{
+							imagesElement[i].setAttribute(config.dataSrc, fileFolder + fileName + fileFormat);
+						}
           }
         }
       }
-    });  
-  
-	  function logElementEvent(eventName, element) {          
+			
+			function logElementEvent(eventName, element) {          
           console.log(
             Date.now(),
             eventName,
             element.getAttribute("data-bg"),
             element.getAttribute("data-src"));
-    };
-	  
-    /* LazyLoad doing what his do (??????) */  
-    var callback_enter = function(element) {
-      logElementEvent("🔑 ENTERED", element);
-    };
-    var callback_exit = function(element) {
-      logElementEvent("🚪 EXITED", element);
-    };
-    var callback_reveal = function(element) {
-      logElementEvent("👁️ REVEALED", element);
-    };
-    var callback_loaded = function(element) {
-      logElementEvent("👍 LOADED", element);
-    };
-    var callback_error = function(element) {
-      logElementEvent("💀 ERROR", element);
-      element.src =
-        "https://via.placeholder.com/440x560/?text=Imagem";
-    };
-    var callback_finish = function() {
-      logElementEvent("✔️ FINISHED", document.documentElement);
-    };
-    
-		if (this.debug)
-		{
-    	var ll = new LazyLoad({
-				elements_selector: ".lazy",
-				// Assign the callbacks defined above
-				callback_enter: callback_enter,
-				callback_exit: callback_exit,
-				callback_reveal: callback_reveal,
-				callback_loaded: callback_loaded,
-				callback_error: callback_error,
-				callback_finish: callback_finish
-			}); 
-	  }
-		else
-		{
-			var ll = new LazyLoad({
-				elements_selector: ".lazy"
-			}); 
-		}
+			};
+			
+			/* LazyLoad doing what his do (??????) */  
+			var callback_enter = function(element) {
+				logElementEvent("🔑 ENTERED", element);
+			};
+			var callback_exit = function(element) {
+				logElementEvent("🚪 EXITED", element);
+			};
+			var callback_reveal = function(element) {
+				logElementEvent("👁️ REVEALED", element);
+			};
+			var callback_loaded = function(element) {
+				logElementEvent("👍 LOADED", element);
+			};
+			var callback_error = function(element) {
+				logElementEvent("💀 ERROR", element);
+				element.src =
+					"https://via.placeholder.com/440x560/?text=Imagem";
+			};
+			var callback_finish = function() {
+				logElementEvent("✔️ FINISHED", document.documentElement);
+			};
+			
+			if (config.debug)
+			{
+				var ll = new LazyLoad({
+					elements_selector: config.dataLazyLoadIndentifier,
+					// Assign the callbacks defined above
+					callback_enter: callback_enter,
+					callback_exit: callback_exit,
+					callback_reveal: callback_reveal,
+					callback_loaded: callback_loaded,
+					callback_error: callback_error,
+					callback_finish: callback_finish
+				}); 
+			}
+			else
+			{
+				var ll = new LazyLoad({
+					elements_selector: config.dataLazyLoadIndentifier
+				}); 
+			}
+    });
   }
   
   
   // check_webp_feature:
   //   'feature' can be one of 'lossy', 'lossless', 'alpha' or 'animation'.
   //   'callback(feature, isSupported)' will be passed back the detection result (in an asynchronous way!)
-  check_webp_feature(feature, callback) 
+  check_webp_feature(feature, config, callback) 
   {
     var kTestImages = {
         lossy: "UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA",
@@ -219,12 +190,12 @@ class modernizeImage
     img.onload = function () 
     {
         var result = (img.width > 0) && (img.height > 0);
-        callback(feature, result);
+        callback(feature, config, result);
     };
     
     img.onerror = function () 
     {
-        callback(feature, false);
+        callback(feature, config, false);
     };
     
     img.src = "data:image/webp;base64," + kTestImages[feature];
