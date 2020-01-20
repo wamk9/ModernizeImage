@@ -23,3 +23,20 @@ But if you want to use in a **background-image**, you can use this code:
 ```
 <span class="modernize-image" data-img-folder="/img" data-img-name="helloworld" data-img-format="jpg" data-has-webp="true" data-display-type="background">
 ```
+
+## Customizing 
+
+When initialized ModernizeImage use some attribs by default, but you can change that! Below you have all attribs used by this script.
+
+| Attrib | Description | Type | Default | Markup Attrib Example 
+| --- | --- | --- | --- | --- | 
+| `dataBg` | This attrib references *data-bg* (background-image) option at [LazyLoad By Verlok](https://github.com/verlok/lazyload) repository, i recommend you to use default. **REMEMBER: The HTML attrib is setted automatically by ModernizeImage, don't insert in HTML Tag.** | string | data-bg | data-bg="/img/helloword.webp"
+| `dataDisplayType` | Used only to use *background-image*. You need set "background" in value to use background-image with ModernizeImage. | string | data-display-type | data-display-type="background"
+| `dataHasWebP` | ModernizeImage use this attrib to confirm if WebP image exists in folder. Use *TRUE* if exists or *FALSE* if doesn't. | string | data-has-webp | data-has-webp="true"
+| `dataImgFolder` | Attrib responsable to get folder path, without slasg at end. | string | data-img-folder | data-img-folder="/img"
+| `dataImgFormat` | Attrib responsable to get image format, without dot at start. | string | data-img-format | data-img-format="jpg"
+| `dataImgName` | Attrib responsable to get image name. | string | data-img-format | data-img-format="jpg"
+| `dataLazyLoadIndentifier` | Name of Tag, Class or ID will ModernizeImage are used. | string | .modernize-image | 
+| `dataSrc` | This attrib references *data-src* (src attrib at IMG tag) option at [LazyLoad By Verlok](https://github.com/verlok/lazyload) repository, i recommend you to use default. **REMEMBER: The HTML attrib is setted automatically by ModernizeImage, don't insert in HTML Tag.** | string | data-src | data-src="/img/helloword.webp"
+| `debug` | Need confirm if are all fine? Set to TRUE to active Debug mode in ModernizeImage and [LazyLoad By Verlok](https://github.com/verlok/lazyload). | boolean | false | 
+
