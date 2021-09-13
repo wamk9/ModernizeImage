@@ -40,3 +40,16 @@ When initialized ModernizeImage use some attribs by default, but you can change 
 | `dataSrc` | This attrib references *data-src* (src attrib at IMG tag) option at [LazyLoad By Verlok](https://github.com/verlok/lazyload) repository, i recommend you to use default. **REMEMBER: The HTML attrib is setted automatically by ModernizeImage, don't insert in HTML Tag.** | string | data-src | data-src="/img/helloword.webp"
 | `debug` | Need confirm if are all fine? Set to TRUE to active Debug mode in ModernizeImage and [LazyLoad By Verlok](https://github.com/verlok/lazyload). | boolean | false | 
 
+## Using Cases
+### PHP (Checks if .webp format exists automatically)
+```
+/* pathinfo — Returns information about a file path */
+$imageUrl = pathinfo('/image/folder/changethis.jpg');
+
+<img id="php" class="modernize-image" 
+            data-img-folder="/<?php echo $imageUrl['dirname']; ?>" 
+            data-img-name="<?php echo $imageUrl['filename']; ?>" 
+            data-img-format="<?php echo $imageUrl['extension']; ?>"
+            <?php echo 'data-has-webp="'.(file_exists($imageUrl['dirname'].'/'.$imageUrl['filename'].'.webp') ? 'true' : 'false').'"'; ?>>
+
+```
